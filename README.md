@@ -1,2 +1,3 @@
 # Foreign-Exchange
-Please download data from CMU Box
+Using random forest algorithm to predict movements
+in the foreign exchange market with MapReduce and Hadoop.
