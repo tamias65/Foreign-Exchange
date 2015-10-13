@@ -1,0 +1,33 @@
+package decision_tree;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+public class Table extends ArrayList<Record>{
+	
+	public Table(int initialCapacity){
+		super(initialCapacity);
+	}
+	
+	public Table() {
+		super();
+	}
+	
+	public Table(Collection<? extends Record> c){
+		super(c);
+	}
+
+	public void removeRandomFeatures(){
+		int numOfFeatures = this.get(0).getFeatureSize();
+		ArrayList<Integer> array = new ArrayList<Integer>(numOfFeatures);
+		for (int a =0; a < numOfFeatures; a++) array.add(a);
+		Collections.shuffle(array);
+		
+		ArrayList<Integer> featureSubset = new ArrayList<Integer>(array.subList(0, (int)Math.sqrt(numOfFeatures)));
+		for(int i = 0; i < this.size(); i++){
+			this.get(i).trimFeatures(featureSubset);
+		}
+	}
+}

@@ -1,0 +1,71 @@
+package decision_tree;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
+//public class Table extends ArrayList<Record>{
+public class Table{	
+	public ArrayList<Record> dataTable;
+
+//	public Table(int initialCapacity){
+//		super(initialCapacity);
+//	}
+	
+//	public Table() {
+//		super();
+//	}
+	
+//	public Table(Collection<? extends Record> c){
+//		super(c);
+//	}
+
+	public Table(){
+		this.dataTable = new ArrayList<Record>();
+	}
+	
+	public Table(Table c){
+		this.dataTable = new ArrayList<Record>(c.dataTable);
+	}
+	
+	//split a data table into left table and right table based on a given median value
+	public void splitOnFeature(Table leftTable, Table rightTable, int featureIndx, double featureValue){
+		for(int i = 0; i < this.dataTable.size(); i++){
+			if(this.dataTable.get(i).features[featureIndx] <= featureValue){
+				leftTable.dataTable.add(this.dataTable.get(i));
+			}else{
+				rightTable.dataTable.add(this.dataTable.get(i));
+			}
+		}
+	}
+	
+	public void splitRandomInstances(Table trainTable, Table testTable, int partition){
+		Table tmpDataTable = new Table(this);
+		Collections.shuffle(tmpDataTable.dataTable);
+//		Table newTrainTable = new Table(tmpDataTable.dataTable.subList(0, partition-1));
+//		Table newTestTable = new Table(tmpDataTable.dataTable.subList(partition, tmpDataTable.size()-1));
+//		trainTable.dataTable = newTrainTable;
+//		testTable.dataTable = newTestTable;
+//		Collections.copy(trainTable.dataTable, tmpDataTable.dataTable.subList(0, partition-1));
+//		Collections.copy(testTable.dataTable, tmpDataTable.dataTable.subList(partition, tmpDataTable.dataTable.size()-1));
+		trainTable.dataTable.addAll(tmpDataTable.dataTable.subList(0, partition-1));
+		testTable.dataTable.addAll(tmpDataTable.dataTable.subList(partition, tmpDataTable.dataTable.size()-1));
+		System.out.println(trainTable.dataTable.get(0).getFeatureSize());
+		trainTable.removeRandomFeatures();	
+		System.out.println(trainTable.dataTable.get(0).getFeatureSize());
+	}
+
+	public void removeRandomFeatures(){
+		int numOfFeatures = this.dataTable.get(0).getFeatureSize();
+		ArrayList<Integer> array = new ArrayList<Integer>(numOfFeatures);
+		for (int a =0; a < numOfFeatures; a++) array.add(a);
+		Collections.shuffle(array);
+		//System.out.println(numOfFeatures);
+		int sqroot = (int) Math.sqrt(numOfFeatures);
+		ArrayList<Integer> featureSubset = new ArrayList<Integer>(array.subList(0, (int)Math.sqrt(numOfFeatures)));
+		for(int i = 0; i < this.dataTable.size(); i++){
+			this.dataTable.get(i).trimFeatures(featureSubset);
+		}
+	}
+
+}

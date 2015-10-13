@@ -1,0 +1,3 @@
+The label is created using the close bid of two timestamps.  If close bid at T+1 is larger than the 
+close bid at T, the label at T is 1.  If the close bid at T+1 is less than the close bid at T, the 
+label at T is -1.  If the close bid is the same for both timestamps, the label is 0.

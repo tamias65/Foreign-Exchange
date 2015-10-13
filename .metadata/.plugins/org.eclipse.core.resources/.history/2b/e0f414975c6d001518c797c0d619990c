@@ -1,0 +1,71 @@
+package random_forest;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Random;
+
+import decision_tree.*;
+
+public class RandomForestMain {
+
+	private static final int numberOfTrees = 100;
+	
+	public static void main(String[] args) {
+		
+		
+		int N = numberOfTrees;
+		
+		ArrayList<Record> rootTable;
+		rootTable = FileReader.buildRecord("C:/Users/Tamias65/Documents/GitHub/Foreign-Exchange/Assignment2_DecisionTree/decision_tree/data.csv");
+		
+		ArrayList<Tree> randomForest = new ArrayList<Tree>(N);
+		for(int i = 0; i < N; i++){
+			System.out.println("Splitting Table...");
+			SplitTable splitDataTable = selectSubsetData(rootTable);
+			
+			Node root = new Node();
+			root.dataTable = splitDataTable.trainTable;
+			Tree t = new Tree(root);
+			t.buildTree(root);
+			
+			randomForest.add(t);
+			System.out.println("Tree added "+i);
+		}
+		
+	}
+	
+	public static SplitTable selectSubsetData(ArrayList<Record> dataTable){
+		ArrayList<Integer> array = new ArrayList<Integer>(dataTable.size());
+		for (int a =0; a < dataTable.size(); ++a) array.add(a);
+		Collections.shuffle(array);
+		
+		int twoThird = array.size()*2/3;
+		ArrayList<Record> trainTable = new ArrayList<Record>(twoThird);
+		ArrayList<Record> testTable = new ArrayList<Record>(array.size()-twoThird);
+		
+		for (int i = 0; i < twoThird; i++){
+			if(i < twoThird){
+				trainTable.add(dataTable.get(array.get(i)));
+		
+			}else{
+				testTable.add(dataTable.get(array.get(i)));
+			}
+			removeRandomFeatures(trainTable);
+		}
+		
+		return new SplitTable(testTable, trainTable);
+	}
+	
+	public static void removeRandomFeatures(ArrayList<Record> trainTable){
+		int numOfFeatures = (int) Math.sqrt(trainTable.get(0).getFeatureSize());	
+		ArrayList<Integer> array = new ArrayList<Integer>(trainTable.size());
+		for (int a =0; a < trainTable.size(); ++a) array.add(a);
+		Collections.shuffle(array);
+		
+		for (int i = 0; i < trainTable.size(); i++){
+			trainTable.get(i).trimFeatures(array);
+		}
+	}
+}

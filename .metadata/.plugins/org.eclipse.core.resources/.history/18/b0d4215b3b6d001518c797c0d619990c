@@ -1,0 +1,15 @@
+package random_forest;
+
+import java.util.ArrayList;
+
+final class SplitTable {
+		
+    private final ArrayList<Record> trainTable;
+    private final ArrayList<Record> testTable;
+
+    public MyResult(ArrayList<Record> trainTable, ArrayList<Record> testTable) {
+        this.trainTable = trainTable;
+        this.testTable = testTable;
+    }
+
+}

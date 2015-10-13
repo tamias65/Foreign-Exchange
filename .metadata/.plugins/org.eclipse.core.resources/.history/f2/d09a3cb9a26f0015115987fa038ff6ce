@@ -1,0 +1,117 @@
+/*Node.java
+ * 
+ * Alvin Chou
+ * 9/29/2015
+ * 
+ * Class Node for keeping track of relevant data at each node.
+ */
+package decision_tree;
+import java.util.*;
+
+public class Node {
+	
+	private static final int LABEL_INDEX = 1;
+	
+	public Table instances;
+	public Integer featureIndx;
+	public Double featureLessThanEqualsTo;
+	public Node left;
+	public Node right;
+	public Integer finalLabel;
+	
+	
+	public Node(){
+		this.instances = null;
+		this.featureIndx = null;
+		this.featureLessThanEqualsTo = null;
+		this.left = null;
+		this.right = null;
+		this.finalLabel = null;
+	}
+	
+	public void setFeatureIndx(int featureIndx){
+		this.featureIndx = featureIndx;
+	}
+	
+	public void setFeatureValue(double featureValue){
+		this.featureLessThanEqualsTo = featureValue;
+	}
+	
+	public void setTable(Table instances){
+		this.instances = instances;
+	}
+	
+	public void setChildren(Node left, Node right){
+		this.left = left;
+		this.right = right;
+	}
+	
+	public void setFinalLabel(int label){
+		this.finalLabel = label;
+	}
+	
+	// Go through the node's table to decide on the proper feature to divide data on
+	// based on information gain.
+	public void setDividingFeature(){
+		int featureIndx = 0;
+		double featureValue = 0;
+		int numOfFeatures = this.instances.dataTable.get(0).getFeatureSize();
+		Double maxGain = null;
+		for(int i = 0; i < numOfFeatures; i++){
+			double featureMedian = this.getMedianOfFeatures(i);
+			double featureIG = InformationGain.getInformationGain(this.instances, i, featureMedian);
+			//System.out.println("Feature: "+i+". IG: "+featureIG);
+			if(Double.isNaN(featureIG)){
+				System.out.println("Information Gain error. Exiting...");
+				System.exit(0);
+			}
+			if(maxGain == null){
+				maxGain = featureIG;
+				featureIndx = i;
+				featureValue = featureMedian;
+			}else if(featureIG > maxGain){
+				featureIndx = i;
+				featureValue = featureMedian;
+			}
+		}
+		this.setFeatureIndx(featureIndx);
+		this.setFeatureValue(featureValue);
+	}
+	
+	// Find the median of the given feature
+	public double getMedianOfFeatures(int featureIndx){
+		double[] valuesOfFeature = new double[this.instances.dataTable.size()];
+		for(int i = 0; i < this.instances.dataTable.size(); i++){
+			valuesOfFeature[i] = this.instances.dataTable.get(i).features[featureIndx];
+		}
+		return findMedian(valuesOfFeature);
+	}
+	
+	public double findMedian(double[] featureArray){
+		Arrays.sort(featureArray);
+		double median;
+		if (featureArray.length % 2 == 0){
+		    median = ((double)featureArray[featureArray.length/2] + (double)featureArray[featureArray.length/2 - 1])/2;
+		}else{
+		    median = (double) featureArray[featureArray.length/2];
+		}
+		return median;
+	}
+	
+	// Returns the label of the table that appears the most time.
+	public int getMajorityLabel(){
+		int majorityLabel;
+		int sumOfLabels = 0;
+		for(int i = 0; i < this.instances.dataTable.size(); i++){
+			sumOfLabels += this.instances.dataTable.get(i).label.intValue();
+		}
+		
+		if(sumOfLabels >= 0){
+			majorityLabel = 1;
+		}else{
+			majorityLabel = -1;
+		}
+		
+		return majorityLabel;
+	}
+}

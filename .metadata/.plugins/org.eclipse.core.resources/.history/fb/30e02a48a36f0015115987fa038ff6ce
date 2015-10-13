@@ -1,0 +1,78 @@
+/*Test.java
+ * 
+ * Alvin Chou
+ * 9/29/2015
+ * 
+ * Class test used to run a test data on a given tree.
+ */
+
+package decision_tree;
+
+import java.util.ArrayList;
+
+//import java.util.ArrayList;
+
+public class Test {
+	public double accuracy;
+	public int correct;
+	public int incorrect;
+	
+	public Test(){
+		this.accuracy = 0.0000;
+		this.correct = 0;
+		this.incorrect = 0;
+	}
+	
+	public void testForest(ArrayList<Tree> forest, Table testSet){
+		this.accuracy = 0;
+		for(int i = 0; i < forest.size(); i++){
+			Test test = new Test();
+			test.testTree(forest.get(i).root, testSet);
+			this.accuracy = ((this.accuracy*i)+test.accuracy)/(i+1);
+		}
+	}
+	
+	public void testTree(Node root, Table testSet){
+		int correct = 0;
+		int incorrect = 0;
+		for(int i = 0; i < testSet.dataTable.size(); i++){
+			int predict = traverseTree(root, testSet.dataTable.get(i));
+			if(predict == testSet.dataTable.get(i).label.intValue()){
+				correct += 1;
+			}else{
+				incorrect += 1;
+			}
+		}
+		
+		double accuracy = (double) correct/(correct+incorrect)*100;
+		this.accuracy = accuracy;
+		this.correct = correct;
+		this.incorrect = incorrect;
+	}
+	
+	// Tree traversal
+	private int traverseTree(Node node, Record record){
+		int prediction = 0;
+		if(node.finalLabel != null){
+			prediction = node.finalLabel;
+		}else{
+			if(record.features[node.featureIndx] <= node.featureLessThanEqualsTo){
+				if(node.left == null){
+					prediction = traverseTree(node.right, record);
+				}else{
+					prediction = traverseTree(node.left, record);
+				}
+			}else if(record.features[node.featureIndx] > node.featureLessThanEqualsTo){
+				if(node.right == null){
+					prediction = traverseTree(node.left, record);
+				}else{
+					prediction = traverseTree(node.right, record);
+				}
+			}else{
+				System.out.println("ERROR. Something wrong in traversing. Exiting...");
+				System.exit(0);
+			}
+		}
+		return prediction;
+	}
+}

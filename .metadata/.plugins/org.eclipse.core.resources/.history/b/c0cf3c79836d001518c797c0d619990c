@@ -1,0 +1,17 @@
+package random_forest;
+
+import java.util.ArrayList;
+
+import decision_tree.Record;
+
+public class SplitTable {
+		
+    public ArrayList<Record> trainTable;
+    public ArrayList<Record> testTable;
+
+    public SplitTable(ArrayList<Record> trainTable, ArrayList<Record> testTable) {
+        this.trainTable = trainTable;
+        this.testTable = testTable;
+    }
+
+}
